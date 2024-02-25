@@ -59,6 +59,7 @@ npm install
 dotnet run
 ```
 The backend should now be running at http://localhost:7279.
+
 3. Frontend Setup:
 
 - In both frontend_customer and frontend_admin directories, create a .env file with the following content:
