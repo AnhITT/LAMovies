@@ -1,0 +1,24 @@
+# Visual Studio Code files
+.vscode/
+
+# Binaries
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.cache
+
+# Dependency directories
+packages/
+node_modules/
+
+# .NET Core
+*.dll
+*.exe
+*.pdb
+*.userprefs
+*.app
+*.msi
+*.zip
