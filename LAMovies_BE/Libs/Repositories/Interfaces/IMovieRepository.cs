@@ -23,6 +23,8 @@ namespace Libs.Repositories.Interfaces
         List<Movie> GetTop6MovieView();
         int CountMovie();
         OddMovie GetURLOddMovie(int id);
+        void AddURLOddMovie(OddMovie data);
+
         List<SeriesMovie> GetURLSeriesMovies(int id);
         string Top1Movie();
 

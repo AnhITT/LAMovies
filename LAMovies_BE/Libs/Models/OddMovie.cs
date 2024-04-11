@@ -9,6 +9,6 @@ namespace Libs.Models
         public int IdMovie { get; set; }
         [Required]
         public string Url { get; set; }
-        public Movie Movie { get; set; }
+        public Movie? Movie { get; set; }
     }
 }

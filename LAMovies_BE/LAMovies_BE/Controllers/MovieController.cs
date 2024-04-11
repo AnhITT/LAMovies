@@ -139,7 +139,21 @@ namespace LAMovies_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        [HttpPost]
+        [Route("AddLinkURL")]
+        public ActionResult AddLinkURL([FromBody] OddMovie movie)
+        {
+            try
+            {
+                _movieRepository.AddURLOddMovie(movie);
+                _movieRepository.Save();
+                return Ok("Add Link URL Success");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPatch]
         public ActionResult UpdateMovie([FromBody] Movie updatedMovie)
         {

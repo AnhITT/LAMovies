@@ -214,5 +214,10 @@ namespace Libs.Repositories
             return genreIds;
         }
 
+        public void AddURLOddMovie(OddMovie data)
+        {
+            _dbContext.OddMovies.Add(data);
+
+        }
     }
 }
