@@ -8,6 +8,7 @@ import {
     AddMovieAPI,
     DeleteMovieAPI,
     GetMovieAPI,
+    AddLinkURL,
 } from "../../api/movie";
 import { GetGenreAPI } from "../../api/genre";
 import { GetActorAPI } from "../../api/actor";
@@ -20,6 +21,7 @@ const Movies = () => {
     const [movieIdToDelete, setMovieIdToDelete] = useState(null);
     const [confirmationModal, setConfirmationModal] = useState(false);
     const [addMovieModal, setAddMovieModal] = useState(false);
+    const [linkModal, setLinkModal] = useState(false);
     const [error, setError] = useState([]);
     const [successModal, setSuccessModal] = useState(false);
     const [genreOptions, setGenreOptions] = useState([]);
@@ -42,6 +44,10 @@ const Movies = () => {
         Episodes: "",
         Genres: [],
         Actor: [],
+    });
+    const [linkMovie, setLinkMovie] = useState({
+        IdMovie: "",
+        Url: "",
     });
     const [editMovie, setEditMovie] = useState({
         Id: "",
@@ -111,7 +117,6 @@ const Movies = () => {
         setError(errors);
         return errors.length === 0;
     };
-
     const fetchData = async () => {
         setItems(await GetMovieAPI());
     };
@@ -154,6 +159,7 @@ const Movies = () => {
             console.error("Error deleting account:", error);
         }
     };
+    //Add Movie
     const toggleAddMovieModal = () => {
         fetchDataAddEdit();
         setAddMovieModal(!addMovieModal);
@@ -169,6 +175,7 @@ const Movies = () => {
     const toggleSuccessModal = () => {
         setSuccessModal(!successModal);
     };
+    //Edit Movie
     const handleEditUser = async (id) => {
         try {
             fetchDataAddEdit();
@@ -210,6 +217,30 @@ const Movies = () => {
     const toggleEditUserModal = () => {
         setEditUserModal(!editUserModal);
     };
+    //Upload
+    const toggleLinkModal = () => {
+        try {
+            setLinkModal(!linkModal);
+        } catch (error) {
+            console.error("Error fetching user data for edit:", error);
+        }
+    };
+    const handleUpdateDataUpload = async (id) => {
+        try {
+            setLinkMovie({
+                IdMovie: id,
+            });
+            setLinkModal(true);
+        } catch (error) {
+            console.error("Error fetching user data for edit:", error);
+        }
+    };
+    const handleAddLink = async () => {
+        await AddLinkURL(linkMovie);
+        toggleLinkModal();
+        toggleSuccessModal();
+    };
+
     const displayItems = searchTerm !== "" ? searchResults : currentItems;
     return (
         <Row>
@@ -377,6 +408,18 @@ const Movies = () => {
                                             <td>{item.view}</td>
 
                                             <td className="d-flex justify-content-center action pt-4">
+                                                <Button
+                                                    className="btn"
+                                                    color="secondary"
+                                                    size="sm"
+                                                    onClick={() =>
+                                                        handleUpdateDataUpload(
+                                                            item.id
+                                                        )
+                                                    }
+                                                >
+                                                    Upload video
+                                                </Button>
                                                 <Button
                                                     className="btn"
                                                     color="primary"
@@ -1210,6 +1253,47 @@ const Movies = () => {
                                 Movie added successfully!
                             </p>
                         </ModalBody>
+                    </Modal>
+                    <Modal isOpen={linkModal} toggle={toggleLinkModal}>
+                        <ModalHeader toggle={toggleLinkModal}>
+                            Upload Movie
+                        </ModalHeader>
+                        <ModalBody>
+                            <form>
+                                <div className="mb-3">
+                                    <label htmlFor="Url" className="form-label">
+                                        Upload
+                                    </label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="Url"
+                                        onChange={(e) =>
+                                            setLinkMovie({
+                                                ...linkMovie,
+                                                Url: e.target.value,
+                                            })
+                                        }
+                                    />
+                                </div>
+                            </form>
+                            {error.map((error, index) => (
+                                <p
+                                    key={index}
+                                    className="error-message text-danger"
+                                >
+                                    {error}
+                                </p>
+                            ))}
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button color="primary" onClick={handleAddLink}>
+                                Upload movie
+                            </Button>
+                            <Button color="secondary" onClick={toggleLinkModal}>
+                                Cancel
+                            </Button>
+                        </ModalFooter>
                     </Modal>
                 </div>
             </Col>

@@ -5,6 +5,7 @@ const END_POINT = {
     THONGKE: "ThongKe",
     CreateMovie: "CreateMovie",
     ShowDetail: "ShowDetail",
+    AddLinkURL: "AddLinkURL",
 };
 
 const GetMovieAPI = () => {
@@ -20,6 +21,17 @@ const AddMovieAPI = (accountData) => {
     return axiosClient.post(
         `${END_POINT.MOVIES}/${END_POINT.CreateMovie}`,
         accountData,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }
+    );
+};
+const AddLinkURL = (data) => {
+    return axiosClient.post(
+        `${END_POINT.MOVIES}/${END_POINT.AddLinkURL}`,
+        data,
         {
             headers: {
                 "Content-Type": "application/json",
@@ -46,4 +58,5 @@ export {
     DeleteMovieAPI,
     GetMovieAPI,
     ThongKe,
+    AddLinkURL,
 };
