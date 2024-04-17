@@ -22,3 +22,5 @@ node_modules/
 *.app
 *.msi
 *.zip
+LAMovies_BE/Helper/credentials.json
+

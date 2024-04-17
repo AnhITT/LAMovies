@@ -7,6 +7,9 @@ using PayPal.Api;
 using System.Security.Policy;
 using System.Text.Json.Serialization;
 using System.Text.Json;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Drive.v3;
+using Google.Apis.Services;
 
 namespace LAMovies_BE.Controllers
 {
@@ -139,6 +142,78 @@ namespace LAMovies_BE.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        [HttpPost]
+        [Route("AddLinkURL")]
+        public ActionResult AddLinkURL([FromBody] OddMovie movie)
+        {
+            try
+            {
+                var url = UploadFileToGoogleDrive(movie);
+                movie.Url = url;
+                _movieRepository.AddURLOddMovie(movie);
+                _movieRepository.Save();
+                return Ok(movie);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        private string GetEmbedCode(string fileId)
+        {
+            return $"https://drive.google.com/file/d/{fileId}/preview";
+        }
+
+        private string UploadFileToGoogleDrive(OddMovie movie)
+        {
+            string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Đường dẫn tới tệp credentials.json
+            string credentialsPath = Path.Combine(appDirectory, "Helper", "credentials.json");
+
+            // Đường dẫn đến thư mục "helper"
+            string _helperDirectory = Path.Combine(appDirectory, "Helper", "token.json");
+
+            GoogleCredential credential;
+            using (var stream = new FileStream(credentialsPath, FileMode.Open, FileAccess.Read))
+            {
+                credential = GoogleCredential.FromStream(stream)
+                    .CreateScoped(DriveService.ScopeConstants.Drive);
+            }
+
+            // Tạo dịch vụ Drive.
+            var service = new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "Google Drive API .NET Quickstart",
+            });
+
+            // ID của thư mục trên Google Drive bạn muốn upload file vào.
+            string folderId = "1X7dc7NCaZYgwrmpDqK6_8YEqBeWDyPXY";
+            var name = _movieRepository.GetById(movie.IdMovie);
+            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            {
+                Name = name.Name,
+                Parents = new[] { folderId }
+            };
+
+            FilesResource.CreateMediaUpload request;
+            using (var stream = new FileStream(movie.Url, FileMode.Open))
+            {
+                request = service.Files.Create(fileMetadata, stream, "video/mp4");
+                request.Fields = "id";
+                request.Upload();
+            }
+
+            var file = request.ResponseBody;
+            Console.WriteLine("File ID: " + file.Id);
+
+            // Lấy mã nhúng từ ID của tập tin
+            string embedCode = GetEmbedCode(file.Id);
+
+            return embedCode;
+        }
+
 
         [HttpPatch]
         public ActionResult UpdateMovie([FromBody] Movie updatedMovie)
