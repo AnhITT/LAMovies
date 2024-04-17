@@ -28,10 +28,10 @@ const AddMovieAPI = (accountData) => {
         }
     );
 };
-const AddLinkURL = (data) => {
+const AddLinkURL = (linkMovie) => {
     return axiosClient.post(
         `${END_POINT.MOVIES}/${END_POINT.AddLinkURL}`,
-        data,
+        linkMovie,
         {
             headers: {
                 "Content-Type": "application/json",

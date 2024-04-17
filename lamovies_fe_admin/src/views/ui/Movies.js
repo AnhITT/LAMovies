@@ -235,10 +235,18 @@ const Movies = () => {
             console.error("Error fetching user data for edit:", error);
         }
     };
+
     const handleAddLink = async () => {
-        await AddLinkURL(linkMovie);
-        toggleLinkModal();
-        toggleSuccessModal();
+        if (!linkMovie.Url) {
+            const errors = [];
+            errors.push("File Null");
+            setError(errors);
+            return errors.length === 0;
+        } else {
+            await AddLinkURL(linkMovie);
+            toggleLinkModal();
+            toggleSuccessModal();
+        }
     };
 
     const displayItems = searchTerm !== "" ? searchResults : currentItems;
@@ -1271,7 +1279,7 @@ const Movies = () => {
                                         onChange={(e) =>
                                             setLinkMovie({
                                                 ...linkMovie,
-                                                Url: e.target.value,
+                                                Url: `C:/Users/Admin/Downloads/${e.target.files[0].name}`,
                                             })
                                         }
                                     />
