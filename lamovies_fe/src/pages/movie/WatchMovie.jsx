@@ -11,9 +11,31 @@ const WatchMovie = () => {
     const history = useHistory();
     const { id } = useParams();
     const [movie, setMovie] = useState([]);
-    const [url, setUrl] = useState([]);
+    const [url, setUrl] = useState('');
     const [currentUser, setCurrentUser] = useState(undefined);
     const [check, setCheck] = useState();
+
+    // Hàm kiểm tra việc mở Developer Tools
+    const isDevToolsOpened = () => {
+        const widthThreshold = 160;
+        const heightThreshold = 160;
+
+        function checkWindowBounds() {
+            const widthChanged = window.outerWidth - window.innerWidth > widthThreshold;
+            const heightChanged = window.outerHeight - window.innerHeight > heightThreshold;
+            return widthChanged || heightChanged;
+        }
+
+        // Kiểm tra sự thay đổi của kích thước cửa sổ mỗi giây
+        setInterval(() => {
+            if (checkWindowBounds()) {
+                // Nếu phát hiện Developer Tools được mở, thực hiện các hành động phù hợp ở đây
+                // Ví dụ: có thể chuyển hướng người dùng hoặc hiển thị thông báo cảnh báo
+                alert('Please do not open Developer Tools!');
+            }
+        }, 1000); // Kiểm tra mỗi giây
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             if (AuthService.getCurrentUser()) {
@@ -40,11 +62,15 @@ const WatchMovie = () => {
             setMovie(movieData);
             if (check) {
                 const data = await GetURLOddMovie(movieData.id);
-                setUrl(data);
+                setUrl(data.url); // Lấy trực tiếp đường dẫn video từ data.url
             }
         };
         fetchData();
+
+        // Kiểm tra việc mở Developer Tools khi component được render
+        isDevToolsOpened();
     }, [check, id]);
+
     const handleWatchWithFriends = async () => {
         try {
             const response = await CreateRoom(movie.name, currentUser.Id);
@@ -53,6 +79,7 @@ const WatchMovie = () => {
             console.error('Error creating room:', error);
         }
     };
+
     return (
         <>
             {check === true ? (
@@ -62,14 +89,29 @@ const WatchMovie = () => {
                             <h1>Movie {movie.name} </h1> <span> | {movie.time} | </span> <span> {movie.quality} </span>
                         </div>
                         <div className="container">
-                            <iframe
-                                src={url.url}
-                                width="100%"
-                                height="605px"
-                                frameBorder="0"
-                                allowFullScreen
-                                title="Embedded Content"
-                            ></iframe>
+                            {url && (
+                                <div style={{ width: '100%', height: '605px', position: 'relative' }}>
+                                    <iframe
+                                        src={url}
+                                        width="100%"
+                                        height="605px"
+                                        frameBorder="0"
+                                        style={{ width: '100%', height: '100%', position: 'absolute' }}
+                                    ></iframe>
+                                    <div
+                                        style={{
+                                            width: '80px',
+                                            height: '80px',
+                                            position: 'absolute',
+                                            right: '0px',
+                                            top: '0px',
+                                            backgroundColor: 'black', // Màu đen với độ mờ 50%
+                                        }}
+                                    >
+                                        &nbsp;
+                                    </div>
+                                </div>
+                            )}
                             <div className="para">
                                 <button id="btnbtn" className="btn-play primary-btn" onClick={handleWatchWithFriends}>
                                     <i className="fas fa-play"></i> WATCH WITH FRIENDS
@@ -82,9 +124,18 @@ const WatchMovie = () => {
                             </div>
                             <div className="soical">
                                 <h3>Share : </h3>
-                                <img src="https://img.icons8.com/color/48/000000/facebook-new.png" />
-                                <img src="https://img.icons8.com/fluency/48/000000/twitter-circled.png" />
-                                <img src="https://img.icons8.com/fluency/48/000000/linkedin-circled.png" />
+                                <img
+                                    src="https://img.icons8.com/color/48/000000/facebook-new.png"
+                                    alt="Facebook Icon"
+                                />
+                                <img
+                                    src="https://img.icons8.com/fluency/48/000000/twitter-circled.png"
+                                    alt="Twitter Icon"
+                                />
+                                <img
+                                    src="https://img.icons8.com/fluency/48/000000/linkedin-circled.png"
+                                    alt="LinkedIn Icon"
+                                />
                             </div>
                         </div>
                     </section>
@@ -107,9 +158,15 @@ const WatchMovie = () => {
                         </div>
                         <div className="soical">
                             <h3>Share : </h3>
-                            <img src="https://img.icons8.com/color/48/000000/facebook-new.png" />
-                            <img src="https://img.icons8.com/fluency/48/000000/twitter-circled.png" />
-                            <img src="https://img.icons8.com/fluency/48/000000/linkedin-circled.png" />
+                            <img src="https://img.icons8.com/color/48/000000/facebook-new.png" alt="Facebook Icon" />
+                            <img
+                                src="https://img.icons8.com/fluency/48/000000/twitter-circled.png"
+                                alt="Twitter Icon"
+                            />
+                            <img
+                                src="https://img.icons8.com/fluency/48/000000/linkedin-circled.png"
+                                alt="LinkedIn Icon"
+                            />
                         </div>
                     </div>
                 </section>
