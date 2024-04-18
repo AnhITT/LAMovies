@@ -1,6 +1,6 @@
 # Visual Studio Code files
 .vscode/
-
+.vs/
 # Binaries
 bin/
 obj/

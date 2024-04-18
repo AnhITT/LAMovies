@@ -62,14 +62,29 @@ const WatchMovie = () => {
                             <h1>Movie {movie.name} </h1> <span> | {movie.time} | </span> <span> {movie.quality} </span>
                         </div>
                         <div className="container">
-                            <iframe
-                                src={url.url}
-                                width="100%"
-                                height="605px"
-                                frameBorder="0"
-                                allowFullScreen
-                                title="Embedded Content"
-                            ></iframe>
+                            <div style={{ width: '100%', height: '605px', position: 'relative' }}>
+                                <iframe
+                                    src={url.url}
+                                    width="100%"
+                                    height="605px"
+                                    frameBorder="0"
+                                    scrolling="no"
+                                    seamless=""
+                                    style={{ width: '100%', height: '100%', position: 'absolute' }}
+                                ></iframe>
+                                <div
+                                    style={{
+                                        width: '80px',
+                                        height: '80px',
+                                        position: 'absolute',
+                                        opacity: '0',
+                                        right: '0px',
+                                        top: '0px',
+                                    }}
+                                >
+                                    &nbsp;
+                                </div>
+                            </div>
                             <div className="para">
                                 <button id="btnbtn" className="btn-play primary-btn" onClick={handleWatchWithFriends}>
                                     <i className="fas fa-play"></i> WATCH WITH FRIENDS
